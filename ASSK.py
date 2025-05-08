@@ -19,8 +19,7 @@ class KalkulatorsApp:
             "Dzelzceļa posms": {"start_height": 200, "end_height": 180, "distance": 2000},
             "Kāpu reljefs": {"start_height": 5, "end_height": 30, "distance": 90}
         }
-        
-        # Tēmas iestatījumi
+          # Tēmas iestatījumi
         self.themes = {
             "Standarta": {
                 "bg": "#f0f0f0", 
@@ -32,39 +31,6 @@ class KalkulatorsApp:
                 "button_border": 2,
                 "graph_color": "#4CAF50", 
                 "point_colors": ["#d32f2f", "#388e3c", "#1976d2", "#ff5722", "#9c27b0", "#ff9800"]
-            },
-            "Tumšā": {
-                "bg": "#2d2d2d", 
-                "fg": "#ff9800", 
-                "accent": "#ff9800", 
-                "button_bg": "#444444", 
-                "frame_bg": "#333333",
-                "button_relief": tk.RAISED,
-                "button_border": 2,
-                "graph_color": "#ff9800", 
-                "point_colors": ["#ff5722", "#ffc107", "#29b6f6", "#66bb6a", "#ec407a", "#7e57c2"]
-            },
-            "Zilā": {
-                "bg": "#e3f2fd", 
-                "fg": "#0d47a1", 
-                "accent": "#2196F3", 
-                "button_bg": "#bbdefb", 
-                "frame_bg": "#e1f5fe",
-                "button_relief": tk.FLAT,
-                "button_border": 1,
-                "graph_color": "#2196F3", 
-                "point_colors": ["#1976d2", "#00b0ff", "#e53935", "#43a047", "#f06292", "#8e24aa"]
-            },
-            "Rozā": {
-                "bg": "#fce4ec", 
-                "fg": "#880e4f", 
-                "accent": "#e91e63", 
-                "button_bg": "#f8bbd0", 
-                "frame_bg": "#f8e0e9",
-                "button_relief": tk.FLAT,
-                "button_border": 1,
-                "graph_color": "#e91e63", 
-                "point_colors": ["#d81b60", "#ff4081", "#1e88e5", "#8bc34a", "#7b1fa2", "#ff9800"]
             }
         }
         
@@ -80,15 +46,13 @@ class KalkulatorsApp:
             "Plakans": {"relief": tk.FLAT, "borderwidth": 0},
             "Izcelts": {"relief": tk.GROOVE, "borderwidth": 8}
         }
-        
-        # Noklusējuma iestatījumu vērtības - Iestatīta fiksētā tēma
+          # Noklusējuma iestatījumu vērtības
         self.current_theme = "Standarta"
         self.current_graph_style = "Standarta"
         self.current_button_style = "Standarta"
         self.animation_enabled = True
         
         # Mainīgie saglabāto, bet vēl nepiemēroto iestatījumu vērtībām
-        self.selected_theme = self.current_theme
         self.selected_graph_style = self.current_graph_style
         self.selected_button_style = self.current_button_style
         self.selected_animation = self.animation_enabled
@@ -182,18 +146,14 @@ class KalkulatorsApp:
         tabs_frame.pack(fill=tk.X, padx=5, pady=5)
       
         active_tab_style = {"bg": theme["accent"], "fg": "white", "relief": tk.RAISED, "borderwidth": 1, "padx": 15, "pady": 5}
-      
         if self.current_theme == "Tumšā":
             inactive_tab_style = {"bg": "#444444", "fg": "#878484", "relief": tk.FLAT, "borderwidth": 1, "padx": 15, "pady": 5}
         else:
             inactive_tab_style = {"bg": "#e0e0e0", "fg": "#333333", "relief": tk.FLAT, "borderwidth": 1, "padx": 15, "pady": 5}
  
-        self.current_tab = tk.StringVar(value="tēmas")
+        self.current_tab = tk.StringVar(value="grafiks")
         
-        themes_tab_btn = tk.Button(tabs_frame, text="Tēmas", font=text_font, command=lambda: self.switch_settings_tab("tēmas"), **active_tab_style)
-        themes_tab_btn.pack(side=tk.LEFT, padx=2, pady=5)
-        
-        graph_tab_btn = tk.Button(tabs_frame, text="Grafiks", font=text_font, command=lambda: self.switch_settings_tab("grafiks"), **inactive_tab_style)
+        graph_tab_btn = tk.Button(tabs_frame, text="Grafiks", font=text_font, command=lambda: self.switch_settings_tab("grafiks"), **active_tab_style)
         graph_tab_btn.pack(side=tk.LEFT, padx=2, pady=5)
         
         button_tab_btn = tk.Button(tabs_frame, text="Pogas", font=text_font, command=lambda: self.switch_settings_tab("pogas"), **inactive_tab_style)
@@ -204,20 +164,18 @@ class KalkulatorsApp:
         
         # Saglabājam atsauces uz cilņu pogām
         self.tab_buttons = {
-            "tēmas": themes_tab_btn,
             "grafiks": graph_tab_btn,
             "pogas": button_tab_btn,
             "animācijas": anim_tab_btn
         }
-      
         separator = ttk.Separator(settings_frame, orient='horizontal')
         separator.pack(fill=tk.X, padx=10, pady=5)
      
         self.content_frame = tk.Frame(settings_frame, bg=theme["frame_bg"])
         self.content_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-        self.show_theme_settings()
-    
+        self.show_graph_settings()
+        
     def switch_settings_tab(self, tab_name):
         """Pārslēdz cilni iestatījumos"""
         theme = self.themes[self.current_theme]
@@ -236,94 +194,17 @@ class KalkulatorsApp:
         for widget in self.content_frame.winfo_children():
             widget.destroy()
 
-        if tab_name == "tēmas":
-            self.show_theme_settings()
-        elif tab_name == "grafiks":
+        if tab_name == "grafiks":
             self.show_graph_settings()
         elif tab_name == "pogas":
             self.show_button_settings()
         elif tab_name == "animācijas":
             self.show_animation_settings()
         
-        if tab_name == "tēmas":
-            self.buttons_frame.pack_forget()
-        else:
-            self.buttons_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=10)
+        self.buttons_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=10)
         
-        self.current_tab = tab_name
-    
-    def show_theme_settings(self):
-        """Parāda tēmu iestatījumus"""
-        theme = self.themes[self.current_theme]
-        text_font = font.Font(family="Arial", size=12)
-        small_font = font.Font(family="Arial", size=10)
- 
-        theme_label = tk.Label(self.content_frame, text="Dizaina tēma:", font=text_font, 
-                             bg=theme["frame_bg"], fg=theme["fg"])
-        theme_label.pack(anchor=tk.W, padx=10, pady=(10, 5))
+        self.current_tab = tab_name    
         
-        theme_desc = tk.Label(self.content_frame, text="Izvēlieties vizuālo tēmu, kas atbilst jūsu vēlmēm:", 
-                            font=small_font, bg=theme["frame_bg"], fg=theme["fg"])
-        theme_desc.pack(anchor=tk.W, padx=10, pady=(0, 10))
-   
-        self.theme_var = tk.StringVar(value=self.current_theme)
- 
-        themes_container = tk.Frame(self.content_frame, bg=theme["frame_bg"])
-        themes_container.pack(fill=tk.X, padx=10, pady=10)
-        
-        for i, theme_name in enumerate(self.themes.keys()):
-            t_colors = self.themes[theme_name]
-   
-            theme_frame = tk.Frame(themes_container, bd=4, relief=tk.RAISED if theme_name == self.current_theme else tk.GROOVE,
-                                bg=t_colors["bg"], width=180, height=140)
-            theme_frame.grid(row=i//2, column=i%2, padx=20, pady=10, sticky=tk.W)
-            theme_frame.pack_propagate(False) 
-       
-            rb = tk.Radiobutton(theme_frame, text=theme_name, variable=self.theme_var, 
-                             value=theme_name, bg=t_colors["bg"], fg=t_colors["fg"],
-                             selectcolor=t_colors["bg"], command=self.preview_theme,
-                             font=small_font)
-            rb.pack(pady=(5, 2), padx=5, anchor=tk.W)
-  
-            bg_frame = tk.Frame(theme_frame, bg=t_colors["bg"], bd=1, relief=tk.SUNKEN, height=20)
-            bg_frame.pack(fill=tk.X, padx=10, pady=2)
-            bg_label = tk.Label(bg_frame, text="Fons", bg=t_colors["bg"], fg=t_colors["fg"], font=("Arial", 8))
-            bg_label.pack(side=tk.LEFT, padx=5)
-   
-            btn_frame = tk.Frame(theme_frame, bg=t_colors["button_bg"], bd=1, height=20, 
-                              relief=t_colors["button_relief"])
-            btn_frame.pack(fill=tk.X, padx=10, pady=2)
-            btn_label = tk.Label(btn_frame, text="Poga", bg=t_colors["button_bg"], fg=t_colors["fg"], font=("Arial", 8))
-            btn_label.pack(side=tk.LEFT, padx=5)
-
-            accent_frame = tk.Frame(theme_frame, bg=t_colors["accent"], bd=1, relief=tk.FLAT, height=15)
-            accent_frame.pack(fill=tk.X, padx=10, pady=2)
-            accent_label = tk.Label(accent_frame, text="Akcents", bg=t_colors["accent"], fg="white", font=("Arial", 8))
-            accent_label.pack(side=tk.LEFT, padx=5)
-   
-        spacer = tk.Frame(self.content_frame, height=20, bg=theme["frame_bg"])
-        spacer.pack(fill=tk.X)
-      
-        btn_container = tk.Frame(self.content_frame, bg=theme["frame_bg"])
-        btn_container.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=10)
-        
-        right_btn_frame = tk.Frame(btn_container, bg=theme["frame_bg"])
-        right_btn_frame.pack(side=tk.RIGHT)
-      
-        apply_btn = tk.Button(right_btn_frame, text="Saglabāt", 
-                               bg=theme["accent"], fg="white", 
-                               command=lambda: self.apply_specific_setting("theme"),
-                               font=small_font, padx=15, pady=5)
-        apply_btn.pack(side=tk.RIGHT, padx=5)
-        
-        back_btn = tk.Button(right_btn_frame, text="Atpakaļ", 
-                         bg=theme["button_bg"], fg=theme["fg"], 
-                         command=self.show_start_page,
-                         font=small_font, padx=15, pady=5)
-        back_btn.pack(side=tk.RIGHT, padx=5)
-     
-        self.buttons_frame = btn_container
-    
     def show_graph_settings(self):
         """Parāda grafika iestatījumus"""
         theme = self.themes[self.current_theme]
@@ -527,31 +408,22 @@ class KalkulatorsApp:
         back_btn.pack(side=tk.RIGHT, padx=5)
         
         # Saglabājam atsauci uz pogu konteineri
-        self.buttons_frame = btn_container
-    
-    def preview_theme(self):
-        """Saglabā izvēlēto tēmu, bet vizuāli nemaina to līdz saglabāšanai"""
-        # Tikai saglabā izvēlēto tēmu mainīgajā, bet nepiemēro to
-        self.selected_theme = self.theme_var.get()
-    
+        self.buttons_frame = btn_container    
+        
     def apply_settings(self):
         """Piemēro visus iestatītus iestatījumus"""
         # Saglabā iepriekšējās vērtības, lai varētu noteikt, kas mainījās
-        prev_theme = self.current_theme
         prev_graph_style = self.current_graph_style
         prev_button_style = self.current_button_style
         prev_animation = self.animation_enabled
         
         # Saglabā jaunos iestatījumus
-        self.current_theme = self.theme_var.get()
         self.current_graph_style = self.graph_style_var.get()
         self.current_button_style = self.button_style_var.get()
         self.animation_enabled = self.animation_var.get()
         
         # Parāda paziņojumu ar informāciju par mainītajiem iestatījumiem
         changes = []
-        if prev_theme != self.current_theme:
-            changes.append(f"- Tēma: {self.current_theme}")
         if prev_graph_style != self.current_graph_style:
             changes.append(f"- Grafika stils: {self.current_graph_style}")
         if prev_button_style != self.current_button_style:
@@ -1071,24 +943,17 @@ class KalkulatorsApp:
         # Piemērot tēmu grafikam
         theme = self.themes[self.current_theme]
         self.ax.set_facecolor(theme["frame_bg"])
+        
     def apply_specific_setting(self, setting_type):
         """Piemēro konkrētu iestatījumu, atkarībā no tā, kurā cilnē atrodamies"""
         # Saglabājam iepriekšējās vērtības, lai varētu parādīt, kas mainījās
-        prev_theme = self.current_theme
         prev_graph_style = self.current_graph_style
         prev_button_style = self.current_button_style
         prev_animation = self.animation_enabled
         
         changes = []
         
-        if self.current_tab == "tēmas":
-            # Piemērot tēmas iestatījumus
-            new_theme = self.theme_var.get()
-            if new_theme != self.current_theme:
-                self.current_theme = new_theme
-                changes.append(f"Tēma: {self.current_theme}")
-        
-        elif self.current_tab == "grafiks":
+        if self.current_tab == "grafiks":
             # Piemērot grafika stila iestatījumus
             new_graph_style = self.graph_style_var.get()
             if new_graph_style != self.current_graph_style:
