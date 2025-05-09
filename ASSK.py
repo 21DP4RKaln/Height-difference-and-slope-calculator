@@ -1,14 +1,22 @@
 import tkinter as tk
-from tkinter import ttk, messagebox, font
+from tkinter import Image, ttk, messagebox, font
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
 
+def center_window(window, width, height):
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+    x = (screen_width - width) // 2
+    y = (screen_height - height) // 2
+    window.geometry(f"{width}x{height}+{x}+{y}")
+
 class KalkulatorsApp:
+
     def __init__(self, root):
         self.root = root
         self.root.title("Augstuma starpības un slīpuma kalkulators")
-        self.root.geometry("1200x800")
+        #self.root.geometry("1200x800")
         self.root.resizable(False, False)
         
         # Sagatavotie datu piemēri
@@ -19,7 +27,8 @@ class KalkulatorsApp:
             "Dzelzceļa posms": {"start_height": 200, "end_height": 180, "distance": 2000},
             "Kāpu reljefs": {"start_height": 5, "end_height": 30, "distance": 90}
         }
-          # Tēmas iestatījumi
+        
+        # Tēmas iestatījumi
         self.themes = {
             "Standarta": {
                 "bg": "#f0f0f0", 
@@ -31,7 +40,7 @@ class KalkulatorsApp:
                 "button_border": 2,
                 "graph_color": "#4CAF50", 
                 "point_colors": ["#d32f2f", "#388e3c", "#1976d2", "#ff5722", "#9c27b0", "#ff9800"]
-            }
+            },
         }
         
         # Grafika un pogu dizaina iestatījumi
@@ -46,7 +55,8 @@ class KalkulatorsApp:
             "Plakans": {"relief": tk.FLAT, "borderwidth": 0},
             "Izcelts": {"relief": tk.GROOVE, "borderwidth": 8}
         }
-          # Noklusējuma iestatījumu vērtības
+        
+        # Noklusējuma iestatījumu vērtības - Iestatīta fiksētā tēma
         self.current_theme = "Standarta"
         self.current_graph_style = "Standarta"
         self.current_button_style = "Standarta"
@@ -76,7 +86,7 @@ class KalkulatorsApp:
         title_frame = tk.Frame(self.root, bg=theme["bg"])
         title_frame.pack(pady=(50, 10))
         
-        title_label = tk.Label(title_frame, text="Augstuma starpības un\nslīpuma kalkulators", 
+        title_label = tk.Label(title_frame, text="AUGSTUMA STARPĪBAS UN\nSLĪPUMA KALKULATORS", 
                                font=title_font, bg=theme["bg"], fg=theme["fg"])
         title_label.pack()
        
@@ -146,14 +156,13 @@ class KalkulatorsApp:
         tabs_frame.pack(fill=tk.X, padx=5, pady=5)
       
         active_tab_style = {"bg": theme["accent"], "fg": "white", "relief": tk.RAISED, "borderwidth": 1, "padx": 15, "pady": 5}
+      
         if self.current_theme == "Tumšā":
             inactive_tab_style = {"bg": "#444444", "fg": "#878484", "relief": tk.FLAT, "borderwidth": 1, "padx": 15, "pady": 5}
         else:
             inactive_tab_style = {"bg": "#e0e0e0", "fg": "#333333", "relief": tk.FLAT, "borderwidth": 1, "padx": 15, "pady": 5}
- 
-        self.current_tab = tk.StringVar(value="grafiks")
         
-        graph_tab_btn = tk.Button(tabs_frame, text="Grafiks", font=text_font, command=lambda: self.switch_settings_tab("grafiks"), **active_tab_style)
+        graph_tab_btn = tk.Button(tabs_frame, text="Grafiks", font=text_font, command=lambda: self.switch_settings_tab("grafiks"), **inactive_tab_style)
         graph_tab_btn.pack(side=tk.LEFT, padx=2, pady=5)
         
         button_tab_btn = tk.Button(tabs_frame, text="Pogas", font=text_font, command=lambda: self.switch_settings_tab("pogas"), **inactive_tab_style)
@@ -161,21 +170,22 @@ class KalkulatorsApp:
         
         anim_tab_btn = tk.Button(tabs_frame, text="Animācijas", font=text_font, command=lambda: self.switch_settings_tab("animācijas"), **inactive_tab_style)
         anim_tab_btn.pack(side=tk.LEFT, padx=2, pady=5)
-        
-        # Saglabājam atsauces uz cilņu pogām
+          # Saglabājam atsauces uz cilņu pogām
         self.tab_buttons = {
             "grafiks": graph_tab_btn,
             "pogas": button_tab_btn,
             "animācijas": anim_tab_btn
         }
+      
         separator = ttk.Separator(settings_frame, orient='horizontal')
         separator.pack(fill=tk.X, padx=10, pady=5)
      
         self.content_frame = tk.Frame(settings_frame, bg=theme["frame_bg"])
         self.content_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-
-        self.show_graph_settings()
         
+        # Automātiski parādīt grafika cilni, kad tiek atvērti iestatījumi
+        self.switch_settings_tab("grafiks")
+    
     def switch_settings_tab(self, tab_name):
         """Pārslēdz cilni iestatījumos"""
         theme = self.themes[self.current_theme]
@@ -200,11 +210,7 @@ class KalkulatorsApp:
             self.show_button_settings()
         elif tab_name == "animācijas":
             self.show_animation_settings()
-        
-        self.buttons_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=10)
-        
-        self.current_tab = tab_name    
-        
+    
     def show_graph_settings(self):
         """Parāda grafika iestatījumus"""
         theme = self.themes[self.current_theme]
@@ -405,11 +411,8 @@ class KalkulatorsApp:
                          bg=theme["button_bg"], fg=theme["fg"], 
                          command=self.show_start_page,
                          font=small_font, padx=15, pady=5)
-        back_btn.pack(side=tk.RIGHT, padx=5)
-        
-        # Saglabājam atsauci uz pogu konteineri
-        self.buttons_frame = btn_container    
-        
+        back_btn.pack(side=tk.RIGHT, padx=5)    
+    
     def apply_settings(self):
         """Piemēro visus iestatītus iestatījumus"""
         # Saglabā iepriekšējās vērtības, lai varētu noteikt, kas mainījās
@@ -418,6 +421,7 @@ class KalkulatorsApp:
         prev_animation = self.animation_enabled
         
         # Saglabā jaunos iestatījumus
+        self.current_theme = self.theme_var.get()
         self.current_graph_style = self.graph_style_var.get()
         self.current_button_style = self.button_style_var.get()
         self.animation_enabled = self.animation_var.get()
@@ -468,20 +472,19 @@ class KalkulatorsApp:
         
         # Programmas apraksts
         info_text = """
-        Augstuma starpības un slīpuma kalkulators
+        Augstuma starpības un slīpuma kalkulators - vienkāršs ģeogrāfisks rīks reljefa analīzei
 
         Šī programma ļauj aprēķināt augstuma starpību un slīpumu starp diviem punktiem.
         
         Lietošanas instrukcija:
-        1. Ievadiet sākuma punkta augstumu metros
-        2. Ievadiet beigu punkta augstumu metros
+        1. Ievadiet sākuma punkta augstumu virs jūras līmeņa (v.j.l.) metros
+        2. Ievadiet beigu punkta augstumu virs jūras līmeņa (v.j.l.) metros
         3. Ievadiet attālumu starp punktiem metros
         4. Nospiediet "APRĒĶINĀT", lai iegūtu rezultātus
         
-        Programma aprēķinās augstuma starpību un slīpuma procentu,
+        Programma aprēķinās augstuma starpību un slīpumu procentos,
         kā arī uzzīmēs grafisku attēlojumu.
         
-        Versija: 0.1
         Laura Līva Kasparinska, 12.b klase
         """
         
@@ -587,22 +590,22 @@ class KalkulatorsApp:
         vcmd = (self.root.register(self.validate_float_input), '%P')
         
         # Sākuma punkta augstums
-        ttk.Label(input_frame, text="Sākuma punkta augst:").grid(row=0, column=0, sticky=tk.W, padx=5, pady=5)
+        ttk.Label(input_frame, text="Sākuma punkta augstums v.j.l.:").grid(row=0, column=0, sticky=tk.W, padx=5, pady=5)
         self.start_height = ttk.Entry(input_frame, validate="key", validatecommand=vcmd, font=("Arial", 10))
         self.start_height.grid(row=0, column=1, sticky=tk.W, padx=5, pady=5)
-        ttk.Label(input_frame, text="metros").grid(row=0, column=2, sticky=tk.W, padx=5, pady=5)
+        ttk.Label(input_frame, text="metri").grid(row=0, column=2, sticky=tk.W, padx=5, pady=5)
         
         # Beigu punkta augstums
-        ttk.Label(input_frame, text="Beigu punkta augst:").grid(row=1, column=0, sticky=tk.W, padx=5, pady=5)
+        ttk.Label(input_frame, text="Beigu punkta augstums v.j.l.:").grid(row=1, column=0, sticky=tk.W, padx=5, pady=5)
         self.end_height = ttk.Entry(input_frame, validate="key", validatecommand=vcmd, font=("Arial", 10))
         self.end_height.grid(row=1, column=1, sticky=tk.W, padx=5, pady=5)
-        ttk.Label(input_frame, text="metros").grid(row=1, column=2, sticky=tk.W, padx=5, pady=5)
+        ttk.Label(input_frame, text="metri").grid(row=1, column=2, sticky=tk.W, padx=5, pady=5)
         
         # Attālums starp punktiem
         ttk.Label(input_frame, text="Attālums starp punktiem:").grid(row=2, column=0, sticky=tk.W, padx=5, pady=5)
         self.distance = ttk.Entry(input_frame, validate="key", validatecommand=vcmd, font=("Arial", 10))
         self.distance.grid(row=2, column=1, sticky=tk.W, padx=5, pady=5)
-        ttk.Label(input_frame, text="metros").grid(row=2, column=2, sticky=tk.W, padx=5, pady=5)
+        ttk.Label(input_frame, text="metri").grid(row=2, column=2, sticky=tk.W, padx=5, pady=5)
         
         # Papildu punktu sadaļa
         additional_points_frame = ttk.LabelFrame(input_frame, text="Papildu punkti:")
@@ -943,7 +946,6 @@ class KalkulatorsApp:
         # Piemērot tēmu grafikam
         theme = self.themes[self.current_theme]
         self.ax.set_facecolor(theme["frame_bg"])
-        
     def apply_specific_setting(self, setting_type):
         """Piemēro konkrētu iestatījumu, atkarībā no tā, kurā cilnē atrodamies"""
         # Saglabājam iepriekšējās vērtības, lai varētu parādīt, kas mainījās
@@ -1112,4 +1114,5 @@ class KalkulatorsApp:
 if __name__ == "__main__":
     root = tk.Tk()
     app = KalkulatorsApp(root)
+    center_window(root, 1200, 800)
     root.mainloop()
